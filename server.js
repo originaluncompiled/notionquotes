@@ -9,7 +9,8 @@ const notion = new Client({
 const app = express();
 app.use(express.json());
 
-fetch('https://zenquotes.io/api/random/')
+setInterval(() => {
+    fetch('https://zenquotes.io/api/random/')
     .then(response => response.json())
     .then(quote => {
         async () => {
@@ -28,6 +29,7 @@ fetch('https://zenquotes.io/api/random/')
         }
     })
     .catch(error => console.log(error))
+}, (24 * 60 * 60 * 1000));
 
 app.listen(3000, () => {
     console.log('App is running on port 3000');
