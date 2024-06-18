@@ -1,9 +1,10 @@
 import express from 'express';
+import cron from 'node-cron';
 import { Client }  from "@notionhq/client";
 
 // Initializing a client
 const notion = new Client({
-  auth: process.env.NOTION_KEY_SECRET,
+  auth: 'secret_itkjO5ScRVRhU9n9p1VN5qtKqlFxoqZt6cvLLnU9Ijr',//process.env.NOTION_KEY_SECRET,
 })
 
 const app = express();
@@ -19,18 +20,21 @@ const updateQuoteBlock = async () => {
             block_id: blockId,
             quote: {
                 rich_text: [{
-                        text: {
-                            content: `"${quote[0].q}"- `,
-                        },
+                    text: {
+                        content: `"${quote[0].q}"- `,
                     },
-                    {
-                        text: {
-                            content: `${quote[0].a}`,
-                        },
-                        annotations: {
-                            bold: true,
-                        },
-                    }],
+                    annotations: {
+                        italic: true,
+                    }
+                },
+                {
+                    text: {
+                        content: `${quote[0].a}`,
+                    },
+                    annotations: {
+                        bold: true,
+                    }
+                }],
             },
             color: 'gray_background',
         });
@@ -41,7 +45,8 @@ const updateQuoteBlock = async () => {
 };
 
 // Update the quote block once a day
-setInterval(updateQuoteBlock, 24 * 60 * 60 * 1000);
+cron.schedule('0 0 * * *', updateQuoteBlock);
+//setInterval(updateQuoteBlock, 24 * 60 * 60 * 1000);
 
 app.listen(3000, () => {
     console.log('App is running on port 3000');
