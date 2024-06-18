@@ -4,7 +4,7 @@ import { Client }  from "@notionhq/client";
 
 // Initializing a client
 const notion = new Client({
-  auth: 'secret_itkjO5ScRVRhU9n9p1VN5qtKqlFxoqZt6cvLLnU9Ijr',//process.env.NOTION_KEY_SECRET,
+  auth: process.env.NOTION_KEY_SECRET,
 })
 
 const app = express();
