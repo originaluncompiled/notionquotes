@@ -9,28 +9,43 @@ const notion = new Client({
 const app = express();
 app.use(express.json());
 
-setInterval(() => {
-    fetch('https://zenquotes.io/api/random/')
-    .then(response => response.json())
-    .then(quote => {
-        async () => {
-            const blockId = '100f57c1e5b84764ac774212c748ee92';
-            const response = await notion.blocks.update({
-                "block_id": blockId,
-                "quote": {
-                    "rich_text": [{
-                        "text": {
-                            "content": `"${quote[0].q}"- ${quote[0].a}`
-                        }
-                    }]
-                },
-                "color": "gray_background"
-            })
-        }
-    })
-    .catch(error => console.log(error))
-}, (24 * 60 * 60 * 1000));
+const updateQuoteBlock = async () => {
+    try {
+        const response = await fetch('https://zenquotes.io/api/random/');
+        const quote = await response.json();
+    
+        const blockId = '100f57c1e5b84764ac774212c748ee92';
+        const updateQuote = await notion.blocks.update({
+            block_id: blockId,
+            quote: {
+                rich_text: [{
+                        text: {
+                            content: `"${quote[0].q}"- `,
+                        },
+                    },
+                    {
+                        text: {
+                            content: `${quote[0].a}`,
+                        },
+                        annotations: {
+                            bold: true,
+                        },
+                    }],
+            },
+            color: 'gray_background',
+        });
+        console.log(updateQuote);
+    } catch (error) {
+        console.error('Error updating quote: ', error);
+    }
+};
+
+// Update the quote block once a day
+setInterval(updateQuoteBlock, 24 * 60 * 60 * 1000);
 
 app.listen(3000, () => {
     console.log('App is running on port 3000');
 });
+
+// Run the quote update immediately on startup
+updateQuoteBlock();
